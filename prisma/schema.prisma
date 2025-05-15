@@ -1,0 +1,65 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  LEADER
+  AGENT
+  SUPPORT
+}
+
+model User {
+  id             Int        @id @default(autoincrement())
+  name           String
+  registryNumber Int        @unique @map("registry_number")
+  password       String
+  email          String     @unique
+  role           Role       @default(ADMIN)
+  registeredAt   DateTime   @default(now()) @map("registered_at")
+  firstAccessAt  DateTime?  @map("first_access_at")
+  cities         City[]
+  movements      Movement[]
+
+  @@map("user")
+}
+
+model City {
+  id           Int      @id @default(autoincrement())
+  name         String
+  uf           String   @db.Char(2)
+  slug         String   @unique
+  registeredAt DateTime @default(now()) @map("registered_at")
+  userId       Int?     @map("user_id")
+  user         User?    @relation(fields: [userId], references: [id])
+
+  @@unique([name, uf])
+  @@map("city")
+}
+
+model Movement {
+  id                   Int      @id @default(autoincrement())
+  description          String
+  equipmentType        String   @map("equipment_type")
+  equipmentDescription String   @map("equipment_description")
+  originCity           String   @map("origin_city")
+  destinyCity          String   @map("destiny_city")
+  originPlant          String   @map("origin_plant")
+  destinyPlant         String   @map("destiny_plant")
+  registeredAt         DateTime @default(now()) @map("registered_at")
+  userId               Int      @map("user_id")
+  user                 User     @relation(fields: [userId], references: [id])
+
+  @@map("movement")
+}
