@@ -16,9 +16,10 @@ export default function MovementRoutes(app: FastifyInstance) {
     )
   );
 
-  app.get("/", async (_, res: FastifyReply) => {
-    const movement = await movementService.getMovementList();
-    res.status(200).send(movement);
+  app.get("/", async (req: FastifyRequest, res: FastifyReply) => {
+    const { id: userId } = req.user
+    const movementList = await movementService.getMovementList(userId);
+    res.status(200).send(movementList);
   });
 
   app.post("/", async (req: FastifyRequest, res: FastifyReply) => {

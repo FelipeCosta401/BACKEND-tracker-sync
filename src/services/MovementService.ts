@@ -4,7 +4,11 @@ import { PrismaClient } from "@prisma/client";
 import UserService from "./UserService";
 
 // Types
-import { movementRegistrationRequestedFields } from "../types/MovementTypes";
+import {
+  movementInterface,
+  movementRegistrationRequestedFields,
+} from "../types/MovementTypes";
+import { userRole } from "../types/UserTypes";
 
 export default class MovementService {
   private db = new PrismaClient();
@@ -21,7 +25,15 @@ export default class MovementService {
     });
   }
 
-  async getMovementList() {
-    return await this.db.movement.findMany();
+  async getMovementList(userId: number) {
+    const { regionId, role: userRole } = await this.userService.getUserById(
+      userId
+    );
+    if (userRole === "ADMIN") return await this.db.movement.findMany();
+    return await this.db.movement.findMany({
+      where: {
+        regionId
+      },
+    });
   }
 }
