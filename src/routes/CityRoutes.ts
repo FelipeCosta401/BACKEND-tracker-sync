@@ -23,10 +23,7 @@ export default function CityRoutes(app: FastifyInstance) {
 
   app.post("/", async (req: FastifyRequest, res: FastifyReply) => {
     const newCityCredentials = CityRequestSchema.parse(req.body);
-    const createdCity = await cityService.saveCity(
-      newCityCredentials,
-      req.user.id
-    );
+    const createdCity = await cityService.saveCity(newCityCredentials);
 
     const response = {
       message: "Cidade cadastrada com sucesso!",

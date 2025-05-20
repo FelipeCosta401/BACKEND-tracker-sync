@@ -3,10 +3,12 @@ import AuthRoutes from "./AuthRoutes";
 import UserRoutes from "./UserRoutes";
 import CityRoutes from "./CityRoutes";
 import MovementRoutes from "./MovementRoutes";
+import RegionRoutes from "./RegionRoutes";
 
 export default async function routes(app: FastifyInstance) {
   app.register(AuthRoutes, { prefix: "/auth" });
   app.register(UserRoutes, { prefix: "/users" });
   app.register(CityRoutes, { prefix: "/city" });
   app.register(MovementRoutes, { prefix: "/movement" });
+  app.register(RegionRoutes, { prefix: "/region" })
 }

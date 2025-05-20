@@ -7,7 +7,7 @@ const LoginRequestSchema = z.object({
       required_error: "Campo 'login' faltando!",
     })
     .min(1, { message: "Campo 'login' não pode ser vazio!" })
-    .refine((val) => val.includes("@") || /^\d{6,}$/.test(val), {
+    .refine((val) => val.includes("@") || /^\d{5,}$/.test(val), {
       message: "Campo 'login' deve ser um e-mail ou número de registro válido!",
     })
     .transform((val) => {
@@ -51,6 +51,9 @@ const RegisterRequestSchema = z
       .string({ required_error: "Campo 'email' não pode ser vazio!" })
       .email({ message: "Formato inválido de email" }),
     role: UserRoleSchema.default("ADMIN"),
+    regionId: z
+      .number({ required_error: "Campo 'regionId' é não pode ser vazio" })
+      .min(1, { message: "Campo 'regionId' é não pode ser vazio" }),
     registeredAt: z.date().optional(),
     firstAccessAt: z.date().optional(),
   })

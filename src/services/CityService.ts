@@ -8,12 +8,12 @@ import {
 export default class CityService {
   private db = new PrismaClient();
 
-  async saveCity({ name, uf }: cityRequiredFields, userId: number) {
+  async saveCity({ name, uf, regionId }: cityRequiredFields) {
     const newCity: cityRegistrationRequestedFields = {
       name,
       uf,
       slug: [name, uf].join(" / "),
-      userId,
+      regionId,
     };
 
     return await this.db.city.create({

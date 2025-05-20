@@ -1,18 +1,23 @@
 import fastify from "fastify";
+import cors from "@fastify/cors";
 
 import routes from "./routes/router";
 import errorHandler from "./middlewares/ErrorHandler";
 
-const app = fastify()
+const app = fastify();
 
-app.register(routes, { prefix: "/api" })
-app.setErrorHandler(errorHandler)
+app.register(cors);
 
-const port = process.env.PORT ? Number(process.env.PORT) : 8080
+app.register(routes, { prefix: "/api" });
+app.setErrorHandler(errorHandler);
 
-app.listen({
+const port = process.env.PORT ? Number(process.env.PORT) : 8080;
+
+app
+  .listen({
     host: "0.0.0.0",
-    port: port
-}).then(() => {
-    console.log(`HTTP Server running on port ${port}`)
-})
+    port: port,
+  })
+  .then(() => {
+    console.log(`HTTP Server running on port ${port}`);
+  });

@@ -2,6 +2,15 @@
 CREATE TYPE "Role" AS ENUM ('ADMIN', 'LEADER', 'AGENT', 'SUPPORT');
 
 -- CreateTable
+CREATE TABLE "region" (
+    "id" SERIAL NOT NULL,
+    "name" TEXT NOT NULL,
+    "registered_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "region_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "user" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
@@ -11,6 +20,7 @@ CREATE TABLE "user" (
     "role" "Role" NOT NULL DEFAULT 'ADMIN',
     "registered_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "first_access_at" TIMESTAMP(3),
+    "region_id" INTEGER NOT NULL,
 
     CONSTRAINT "user_pkey" PRIMARY KEY ("id")
 );
@@ -20,7 +30,7 @@ CREATE TABLE "city" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "registered_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "user_id" INTEGER,
+    "region_id" INTEGER NOT NULL,
 
     CONSTRAINT "city_pkey" PRIMARY KEY ("id")
 );
@@ -37,6 +47,7 @@ CREATE TABLE "movement" (
     "destiny_plant" TEXT NOT NULL,
     "registered_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "user_id" INTEGER NOT NULL,
+    "region_id" INTEGER NOT NULL,
 
     CONSTRAINT "movement_pkey" PRIMARY KEY ("id")
 );
@@ -51,7 +62,13 @@ CREATE UNIQUE INDEX "user_email_key" ON "user"("email");
 CREATE UNIQUE INDEX "city_name_key" ON "city"("name");
 
 -- AddForeignKey
-ALTER TABLE "city" ADD CONSTRAINT "city_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "user" ADD CONSTRAINT "user_region_id_fkey" FOREIGN KEY ("region_id") REFERENCES "region"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "city" ADD CONSTRAINT "city_region_id_fkey" FOREIGN KEY ("region_id") REFERENCES "region"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "movement" ADD CONSTRAINT "movement_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "movement" ADD CONSTRAINT "movement_region_id_fkey" FOREIGN KEY ("region_id") REFERENCES "region"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

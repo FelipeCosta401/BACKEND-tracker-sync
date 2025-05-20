@@ -20,17 +20,31 @@ enum Role {
   SUPPORT
 }
 
+model Region {
+  id           Int      @id @default(autoincrement())
+  name         String   @unique
+  registeredAt DateTime @default(now()) @map("registered_at")
+
+  users     User[]
+  cities    City[]
+  movements Movement[]
+
+  @@map("region")
+}
+
 model User {
-  id             Int        @id @default(autoincrement())
+  id             Int       @id @default(autoincrement())
   name           String
-  registryNumber Int        @unique @map("registry_number")
+  registryNumber Int       @unique @map("registry_number")
   password       String
-  email          String     @unique
-  role           Role       @default(ADMIN)
-  registeredAt   DateTime   @default(now()) @map("registered_at")
-  firstAccessAt  DateTime?  @map("first_access_at")
-  cities         City[]
-  movements      Movement[]
+  email          String    @unique
+  role           Role      @default(ADMIN)
+  registeredAt   DateTime  @default(now()) @map("registered_at")
+  firstAccessAt  DateTime? @map("first_access_at")
+  regionId       Int       @map("region_id")
+
+  region    Region     @relation(fields: [regionId], references: [id])
+  movements Movement[]
 
   @@map("user")
 }
@@ -41,10 +55,10 @@ model City {
   uf           String   @db.Char(2)
   slug         String   @unique
   registeredAt DateTime @default(now()) @map("registered_at")
-  userId       Int?     @map("user_id")
-  user         User?    @relation(fields: [userId], references: [id])
+  regionId     Int      @map("region_id")
 
-  @@unique([name, uf])
+  region Region @relation(fields: [regionId], references: [id])
+
   @@map("city")
 }
 
@@ -59,7 +73,10 @@ model Movement {
   destinyPlant         String   @map("destiny_plant")
   registeredAt         DateTime @default(now()) @map("registered_at")
   userId               Int      @map("user_id")
-  user                 User     @relation(fields: [userId], references: [id])
+  regionId             Int      @map("region_id")
+
+  user   User   @relation(fields: [userId], references: [id])
+  region Region @relation(fields: [regionId], references: [id])
 
   @@map("movement")
 }

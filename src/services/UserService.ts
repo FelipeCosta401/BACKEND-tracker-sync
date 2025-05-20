@@ -4,6 +4,7 @@ import { registerCredentialsInterface } from "../types/AuthTypes";
 import { generateHashedPassword } from "../infra/BcryptService";
 
 import { userDTO } from "../types/UserTypes";
+import AppError from "../Exceptions/AppError";
 
 export default class UserService {
   private db = new PrismaClient();
@@ -33,8 +34,17 @@ export default class UserService {
     return usersDTO;
   }
 
+  async getUserById(id: number) {
+    const userFound = await this.db.user.findUnique({
+      where: {
+        id,
+      },
+    });
+    if (!userFound) throw new AppError("Usuário não existe!", 404);
+    return userFound
+  }
+
   async userExistsByEmail(email: string) {
-    console.log(email);
     return await this.db.user.findUnique({
       where: {
         email,
@@ -43,7 +53,6 @@ export default class UserService {
   }
 
   async userExistsByRegistryNumber(registryNumber: number) {
-    console.log(registryNumber);
     return await this.db.user.findUnique({
       where: {
         registryNumber,

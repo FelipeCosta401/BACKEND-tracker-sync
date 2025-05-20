@@ -24,10 +24,10 @@ export default function MovementRoutes(app: FastifyInstance) {
   app.post("/", async (req: FastifyRequest, res: FastifyReply) => {
     const movement = MovementeRequestSchema.parse(req.body);
     const userId = req.user.id;
-    const createdMovement = await movementService.saveMovement(
-      movement,
+    const createdMovement = await movementService.saveMovement({
+      ...movement,
       userId
-    );
+    });
     const response = {
       message: "Movimentação cadastrada com sucesso!",
       createdMovement,
